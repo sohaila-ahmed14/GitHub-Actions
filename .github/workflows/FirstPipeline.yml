@@ -1,7 +1,6 @@
 name: Sohila CI pipeline
 
-on:
-  workflow_dispatch:
+on: workflow_dispatch
 
 concurrency:
   group: java-maven-pipeline
@@ -50,4 +49,20 @@ jobs:
         run: |
           docker push ${{ secrets.DOCKER_USERNAME }}/java:${{ github.run_number }}
           docker push ${{ secrets.DOCKER_USERNAME }}/java:latest
-      - name
+      - name: Checkout CD Repo
+        uses: actions/checkout@v4
+        with: 
+          repository: sohaila-ahmed14/CD
+          path: cdrepo
+          token: ${{ secrets.CD_REPO_TOKEN }}
+      - name: Update image tag
+        run: sed -i "s|image: .*|image: sohila149/myapp:${{ github.run_number }}|" cdrepo/deployment.yaml
+      
+      - name: Commit and push changes
+        run: |
+         cd cd-repo
+         git config user.name "github-actions"
+         git config user.email "github-actions@github.com"
+         git add .
+         git commit -m "Update image tag to ${{ github.run_number }}" 
+         git push
