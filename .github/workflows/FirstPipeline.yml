@@ -21,8 +21,9 @@ jobs:
       - name: Set Up Java 11
         uses: actions/setup-java@v4
         with:
-          distribution: temurin
+          distribution: 'adpot'
           java-version: '11'
+          cache: maven
 
       - name: Build JAR
         run: mvn clean package
@@ -49,3 +50,4 @@ jobs:
         run: |
           docker push ${{ secrets.DOCKER_USERNAME }}/java:${{ github.run_number }}
           docker push ${{ secrets.DOCKER_USERNAME }}/java:latest
+      - name
